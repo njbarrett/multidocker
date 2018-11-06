@@ -1,0 +1,20 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t njbarrett/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run njbarrett/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t njbarrett/multidocker-client ./client
+  - docker build -t njbarrett/multidocker-nginx ./nginx
+  - docker build -t njbarrett/multidocker-server ./server
+  - docker build -t njbarrett/multidocker-worker ./worker
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  - docker push njbarrett/multidocker-client
+  - docker push njbarrett/multidocker-nginx
+  - docker push njbarrett/multidocker-server
+  - docker push njbarrett/multidocker-worker
