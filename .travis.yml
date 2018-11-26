@@ -18,3 +18,16 @@ after_success:
   - docker push njbarrett/multidocker-nginx
   - docker push njbarrett/multidocker-server
   - docker push njbarrett/multidocker-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: ap-southeast-2
+  app: multi-docker
+  env: MultiDocker-env
+  bucket_name: elasticbeanstalk-ap-southeast-2-534287105762
+  bucket_path: multi-docker
+  on:
+    branch_name: master
+  access_key_id: $AWS_KEY
+  secret_access_key:
+    secure: $AWS_SECRET
